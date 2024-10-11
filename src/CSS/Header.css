@@ -1,0 +1,15 @@
+
+
+.headerContainer {
+    width:1920px;
+    max-height: 100px;
+    border: 1px;
+    margin-top: 0px;
+    box-sizing: border-box;
+    background-color:#FFFFFF
+   
+}
+
+.headerImage {
+    border-color: aqua;
+}

@@ -1,0 +1,180 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  place-items: center;
+ 
+}
+
+ /* @font-face {
+  font-family: 'Fira GO';
+  src: url('./Fonts/firago-latin-700-normal.woff2') format('woff2'),
+       url('./Fonts/firago-latin-700-normal.woff') format('woff');   
+  font-weight: 700;
+  font-style: normal;
+} */
+/* Container styling */
+.container {
+ 
+  width:1596px;
+  height:1230px;
+  margin-top: 301px;
+  margin-left: 162px;
+  padding-bottom: 300px;
+  gap:20px;
+
+}
+
+
+.estate-list {
+  display: flex;
+  gap: 20px; /* Adjust as needed */
+  
+  flex-wrap: wrap;
+
+}
+
+.estate-card {
+  min-width: 384px;
+  height: 455px;
+  position: relative;
+  top: 20px;
+  left: 20px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  opacity: 1; /* Adjust for visibility */
+}
+
+.estate-image {
+  width: 384px;
+  height: 307px;
+  border-radius: 14px 14px 0 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  color: white; /* Text color */
+  padding:6px;
+ 
+}
+.status {
+
+  width: 90px;
+  height: 26px;
+  gap: 10px; /* Gap between elements, if needed */
+  border-radius: 15px; /* Rounded corners */
+  opacity: 1; /* Set to 1 to make it visible */
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14.4px;
+  letter-spacing: 0.04em;
+  padding-top:9px;
+  text-align: center;
+  background-color: #02152680; /* Optional: background for better visibility */
+  position: relative; /* Optional, if you need to position it */
+}
+
+
+
+.estate-card:hover .overlay {
+  opacity: 1; /* Show on hover */
+}
+
+
+.estate-details {
+  width: 100%; /* Fill available width */
+  height: 148px;
+  border: 0 1px 1px 1px;
+  box-sizing: border-box;
+  opacity: 1; /* Adjust for visibility */
+  border-bottom-right-radius: 14px;
+  border-bottom-left-radius: 14px;  
+  padding-top: 22px;
+  padding-right: 25px;
+  padding-bottom: 22px;
+  padding-left: 25px;
+  gap: 20px;
+  border-right: 1px;
+  border-bottom: 1px;
+  border-left: 1px;
+}
+
+.price-address-location {
+  padding: 0;
+  width: 334px; /* Fill available width */
+  height: 60px; /* Adjust for height */
+  display: flex;
+  flex-direction: column;
+  opacity: 1; /* Adjust for visibility */
+  gap: 4px;
+   
+}
+
+.price-tag {
+  margin:0; /*zrdis komponentis sigrdze siganes */
+  padding:0;
+  width: 334px;
+  height: 34px; /* Adjust for height */
+  gap:0px;
+  opacity: 1; /* Adjust for visibility */
+
+}
+
+.address {
+  margin:0;
+  padding: 0;
+  width: 334px;
+  height: 20px;
+  display: flex;
+  opacity:1;
+}
+
+
+.property-info {
+  display: flex;
+  justify-content: space-between;
+  width: 214px; /* Fill available width */
+  height: 24px; /* Adjust for height */
+  padding-top: 20px; /* Adjust as needed */
+  opacity: 1; /* Adjust for visibility */
+  margin: 0;
+  
+  
+
+}
+
+.bed-container {
+  width: 37px;
+  height: 24px;
+}
+.bedroom {
+  margin:0;
+}
+
+.area-container {
+  width: 74px;
+  height: 19px;
+}
+.area {
+ margin: 0;
+}
+
+.zip-container {
+  width: 54px;
+  height: 19px;
+}
+.zipcode {
+ margin: 0;
+}
+
+
