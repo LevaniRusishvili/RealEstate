@@ -1,5 +1,7 @@
 
+
 body {
+  
   margin: 0;
   padding: 0;
   display: flex;
@@ -175,6 +177,470 @@ body {
 }
 .zipcode {
  margin: 0;
+}
+
+
+/*---------------filter-------------------------*/
+
+.filter-container {
+  margin-top: 77px;
+  margin-left: 162px;
+  display: flex;
+  justify-content: space-between;
+  width: 785px;
+  height: 47px;
+  border:1px solid #DBDBDB;
+  border-radius:10px;
+  align-items: center;
+ 
+ 
+}
+
+.filter-Region {
+ 
+  margin-left:4px;
+  width: 116px;
+  height: 35px;
+  display:flex;
+  align-items: center;
+  
+}
+
+
+.paragraph-Region {
+  
+  text-align: center;
+  font-size:16px;
+  line-height: 19.2px;
+  color: #021526;
+  margin-top:8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+ font-family: "Fira GO", sans-serif; 
+  font-weight: 700;
+}
+
+.filter_Icon {
+  width: 14px;
+  height:14px;
+  cursor: pointer;
+}
+.filter-price-category {
+  width: 199px;
+  height: 35px;
+  display:flex;
+  align-items: center;
+  
+}
+
+.paragraph-Price-Category {
+   font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  font-size:16px;
+  line-height: 19.2px;
+  color: #021526;
+  margin-top:8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 700;
+}
+
+.filter-area {
+  width: 124px;
+  height: 35px;
+  display:flex;
+  align-items: center;
+}
+
+.paragraph-area {
+   
+  text-align: center;
+  font-size:16px;
+  line-height: 19.2px;
+  color: #021526;
+  margin-top:8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 700;
+}
+
+.filter-bedroom {
+  width: 262px;
+  height: 35px;
+  display:flex;
+  align-items: center;
+}
+
+.paragraph-bedroom {
+   font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  font-size:16px;
+  line-height: 19.2px;
+  color: #021526;
+  margin-top:8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 700;
+}
+
+
+
+
+
+
+
+
+
+
+/* Dropdown styling */
+.region-dropdown {
+  z-index: 1000;
+  position: absolute; /* Overlaying dropdown */
+  width: 731px; /* Fixed width */
+  max-height: 284px; /* Fixed height */
+  top: 234px;
+  left: 162px;
+  padding: 24px 0; /* Top padding */
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid #ccc; /* Light border */
+  background-color: white; /* Background for dropdown */
+  opacity: 1; /* Make it visible */
+  display: flex;
+  flex-direction: column; /* Stack header and items */
+  
+}
+
+/* Inside content styling */
+.region-dropdown-inside-content {
+  width: 100%; /* Full width */
+  height: auto; /* Let height adjust based on content */
+  gap: 24px; /* Space between header and content */
+  display: flex;
+  flex-direction: column; /* Stack header and checkbox container */
+}
+
+/* Header styling */
+.region-header-container {
+  width: 100%; /* Full width */
+  padding-left: 20px; /* Padding for the header */
+
+}
+.region-header {
+  margin:0;
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 500;
+  font-size:16px;
+  line-height: 19.2px;
+  color: #021526;
+  
+}
+
+/* Checkbox container */
+.checkbox-container {
+  margin-left:24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 20px; /* Space between checkboxes */
+  width: 100%; /* Full width */
+}
+
+/* Individual region item styling */
+.region-item {
+  
+  display: flex;
+  align-items: center; /* Center items vertically */
+  width: 100%; /* Full width */
+}
+
+/* Checkbox styling */
+.region-checkbox {
+  
+  width: 20px; /* Width of checkbox */
+  height: 20px; /* Height of checkbox */
+  margin-top:0;
+  margin-bottom:0;
+  margin-right: 8px; /* Space between checkbox and label */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.region-checkbox:checked {
+  accent-color: green; /* Change the checkbox color to green */
+}
+
+
+/* Label styling */
+.region-label {
+  display: flex;
+  align-items: center; /* Center label text */
+  width:163px;
+  height:17px; 
+}
+
+/* Region name styling */
+.region-name {
+  font-family: 'Fira GO', sans-serif;
+  text-align: center;
+  font-size: 14px; /* Font size for the region name */
+  color:#021526;
+  font-weight: 400;
+  line-height: 16.8px;
+}
+
+/* Loading and error message styling */
+.loading-message,
+.error-message {
+  text-align: center; /* Center the text */
+  width: 100%; /* Full width */
+}
+
+
+.choose-button-container {
+ 
+  background-color: none;
+  display: flex; 
+  justify-content: flex-end; 
+  align-items: center; 
+  padding-top: 35px;
+
+}
+
+.choose-button {
+  font-family: 'firaGO', Arial,  sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.8px;
+  width: 77px;
+  height:33px;
+  border-color: white;
+  background-color: #F93B1D; /* Set background color */
+  color: white; /* Set text color for contrast */
+  display: flex; /* Use flexbox to center text */
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */
+  border-radius:8px;
+
+}
+
+.main-container-price-category-filter {
+  width: 382px;
+  height:372px;
+  top:234px;
+  left:306px;
+  position: absolute;
+  display: flex;
+   flex-direction: column; /* Stack children vertically */
+  justify-content: space-between; /* Space between children */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  opacity: 1;
+  z-index: 1000;
+  padding:0;
+  margin:0;
+  
+}
+
+.price-category-dropdown-inside-content { 
+  width:auto;
+  height:auto;
+  padding-top:0;
+  padding-bottom:0;
+  padding-left:24px;
+  padding-right:24px;
+}
+
+.first-inner-container {
+  min-width: 334px;
+  height: 259px;
+ 
+  
+}
+
+.price-placement-container {
+  position: relative;
+  display: flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.price-placement {
+  width: 155px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #808A93;
+  border-radius: 6px;
+}
+
+
+.inner-price-placement {
+  width: 100%;
+  height:17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+}
+
+.GEL_Icon {
+  width:14px;
+  height:17px;
+  padding-right: 7px;
+  
+}
+
+.price-paragraph {
+  font-family: "Fira GO", sans-serif; 
+  font-weight: 400;
+  color:  #02152666;
+}
+
+.price-range-container {
+  width: 334px;
+  height: auto;
+  position: relative;
+  display: flex;
+  padding-top:0;
+  justify-content: space-between;
+}
+
+.price-range-inner-container {
+  width:155px;
+  height:150px;
+  padding-top:0;
+  
+ 
+}
+
+.header-price-range {
+  margin: 0;
+}
+
+.price-range-list {
+  list-style-type: none;
+  margin-bottom: 0;
+  padding-left:0;
+}
+
+.price-range-item {
+font-family: "Fira GO", sans-serif; 
+  font-weight: 400;
+  margin-top:5px;
+}
+
+.GEL_Icon2 {
+  width:12px;
+  height:14px;
+  padding-left: 7px;
+}
+
+.square-meters-container {
+margin-right: 10px;
+position: relative;
+display: inline-flex;
+
+}
+
+.square-meters-container p {
+  font-size: 1em; /* Ensures the paragraph text is at a normal size */
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 400;
+}
+
+.square-meters {
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 400;
+  margin-top: 1.2em;
+  font-size: 0.75em;               /* Align to superscript position */
+  margin-left: -0.01em;          /* Adjust the horizontal space between 'მ' and '2' */
+}
+
+.price-range-list-item-container {
+  position:relative;
+  display: flex;
+  width: 120px;
+  height:25px;
+  align-items: center;
+}
+
+.area-range-list {
+  margin-top:10px;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+
+.main-container-Area-category-filter {
+  width: 382px;
+  height:382px;
+  top:234px;
+  left:529px;
+  position: absolute;
+  display: flex;
+   flex-direction: column; /* Stack children vertically */
+  justify-content: space-between; /* Space between children */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  opacity: 1;
+  z-index: 1000;
+  padding:0;
+  margin:0;
+}
+
+.bedroom-filter-main-container {
+  width: 282px;
+  height: 198px;
+  top:234px;
+  left: 679px;
+  border: 1px solid #DBDBDB;
+  border-radius: 10px;
+  position: absolute;
+  display: flex;
+  opacity: 1;
+  z-index: 1000;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  margin:0;
+  background-color: white;
+
+}
+
+.bedroom-filter-inner-container {
+  padding-left:20px;
+  padding-top:20px;
+  width: 100%;
+  height:85px;
+
+}
+
+.bedroom-filter-header {
+   font-family: "Fira GO", sans-serif; 
+  font-weight: 500;
+  line-height: 19.2px;
+  font-size: 16px;
+  width: 216px;
+  height:19px;
+  margin:0;
+  
+ 
+}
+
+.bedroom-choose-button-container {
+width:234px;;
+height: 33px;
+position: absolute;
+display:flex;
+justify-content: flex-end;
+bottom:0;
+margin-bottom:10px;
+margin-left:25px;
+
 }
 
 
