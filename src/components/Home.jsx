@@ -83,15 +83,21 @@ const Home = () => {
   const [regions, setRegions] = useState([]);
   const [loadingRegions, setLoadingRegions] = useState(false); // Initially set to false
   const [errorRegions, setErrorRegions] = useState(null);
-  const [isRegionDropdownOpen, setIsRegionDropdownOpen] = useState(false);
+
   const [selectedRegions, setSelectedRegions] = useState([]);
-  const [isPriceCategoryDropdownOpen, setIspriceCategoryDropdownOpen] =
-    useState(false);
-  const [isAreaDropdownOpen, setIsAreaDrowpdownOpen] = useState(false);
-  const [isBedroomDropdownOpen, setIsBedroomDropdownOpen] = useState(false);
+
+  const [isRegionClicked, setIsRegionClicked] = useState(false);
+
+  const [isActiveDropdown, setIsActiveDropdown] = useState(null);
+
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [isEditingMinPrice, setIsEditingMinPrice] = useState(false);
+  const [isEditingMaxPrice, setIsEditingMaxPrice] = useState(false);
+
   const priceRanges = [50000, 100000, 150000, 200000, 300000, 500000];
   const areaRanges = [50, 100, 150, 200, 300, 500];
-
+  const bedrooms = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
   //const [stateVariable, setStateVariable] = useState([initialValue])
   //stateVariable aris exlandeli value.
   //setStateVariable aris funqcia romlitac vaupdatebt states
@@ -155,7 +161,7 @@ const Home = () => {
 
       const data = await response.json();
       setRegions(data);
-      console.log(data);
+      console.log("Regions fetched: ", data);
     } catch (error) {
       setErrorRegions(error);
       console.error("Error fetching regions:", error);
@@ -189,44 +195,87 @@ const Home = () => {
   //if (errorRegions) return <p className="error">Error: {errorRegions.message}</p>
 
   const handleRegionClick = () => {
-    if (!isRegionDropdownOpen) {
+    // Close any currently active dropdown (if any)
+    if (isActiveDropdown !== "region") {
+      setIsActiveDropdown("region"); // Set active dropdown to "region"
+    } else {
+      setIsActiveDropdown("null"); // Close the dropdown if it's already active
+    }
+
+    // Fetch regions if they haven't been fetched yet
+    if (regions.length === 0) {
       fetchRegions();
-      console.log("clicked on region");
+      console.log("Fetching regions...");
     }
-    setIsRegionDropdownOpen((prev) => !prev);
   };
 
-  const handlePriceCategoryClick = () => {
-    if (!isPriceCategoryDropdownOpen) {
-      console.log("clicked on price category");
+  /*----es aris imistvis, rom mxolod erti filtris fanjara gaixsnas--------*/
+  const handleDropdownClick = (dropdown) => {
+    if (isActiveDropdown === dropdown) {
+      setIsActiveDropdown(null);
+    } else {
+      setIsActiveDropdown(dropdown);
     }
-    setIspriceCategoryDropdownOpen((prev) => !prev);
+  };
+  /*----------------------------------------------------------------------*/
+
+  /*----------------------------------------------------------------------*/
+  const handleMinPriceClick = () => {
+    setIsEditingMinPrice(true);
   };
 
-  const handleAreaClick = () => {
-    if (!isAreaDropdownOpen) {
-      //if true, because we gave it  value of false in useState
-      console.log("clicked on Area");
-    }
-    setIsAreaDrowpdownOpen((prev) => !prev);
+    const handleMaxPriceClick = () => {
+      setIsEditingMaxPrice(true);
+    };
+
+  const handleBlur = () => {
+    if(minPrice === "") {
+      setIsEditingMinPrice(false);
+    } 
+    
   };
 
-  const handleBedroomClick = () => {
-    if (!isBedroomDropdownOpen) {
-      console.log("clicked on Bedroom");
-    }
-    setIsBedroomDropdownOpen((prev) => !prev);
+ const handleBlurMax = () => {
+   if (maxPrice === "") {
+     setIsEditingMaxPrice(false);
+   }
+ };
+
+
+
+  // Your handler function should look like this
+  const handleMinPriceChange = (event) => {
+    const valueMinPrice = event.target.value; // Get the value from the event target
+    setMinPrice(valueMinPrice); // Update the state with the new value
   };
 
+   const handleMaxPriceChange = (event) => {
+     const valueMaxPrice = event.target.value; // Get the value from the event target
+     setMaxPrice(valueMaxPrice); // Update the state with the new value
+   };
+  
+
+  /*----------------------------------------------------------------------*/
   return (
     <>
       <div className="filter-container">
-        <div className="filter-Region" onClick={handleRegionClick}>
+        <div
+          className={`filter-Region ${
+            isActiveDropdown === "region" ? "clicked" : ""
+          }`}
+          onClick={handleRegionClick}
+        >
           <p className="paragraph-Region">რეგიონი</p>
-          <img src={Filter_Icon} alt="Filter Icon" className="filter_Icon" />
+          <img
+            src={Filter_Icon}
+            alt="Filter Icon"
+            className={`filter_Icon ${
+              isRegionClicked ? "reverse-when-clicked" : ""
+            }`}
+          />
         </div>
 
-        {isRegionDropdownOpen && (
+        {isActiveDropdown === "region" && (
           <div className="region-dropdown">
             <div className="region-dropdown-inside-content">
               <div className="region-header-container">
@@ -268,44 +317,77 @@ const Home = () => {
         )}
 
         <div
-          className="filter-price-category"
-          onClick={handlePriceCategoryClick}
+          className={`filter-price-category ${
+            isActiveDropdown === "price" ? "clicked" : ""
+          }`}
+          onClick={() => handleDropdownClick("price")}
         >
           <p className="paragraph-Price-Category">საფასო კატეგორია</p>
           <img src={Filter_Icon} alt="Filter Icon" className="filter_Icon" />
         </div>
 
-        {isPriceCategoryDropdownOpen && (
+        {isActiveDropdown === "price" && (
           <div className="main-container-price-category-filter">
             <div className="price-category-dropdown-inside-content">
               <div className="first-inner-container">
                 <h3 className="price-category-header">ფასის მიხედვით</h3>
                 <div className="price-placement-container">
-                  <div className="price-placement">
+                  <div
+                    className="price-placement"
+                    onClick={handleMinPriceClick}
+                  >
                     <div className="inner-price-placement">
-                      <p className="price-paragraph">დან</p>
-                      <img
-                        src={GEL_Icon}
-                        alt="price-icon"
-                        className="GEL_Icon"
-                      ></img>
+                      {isEditingMinPrice ? (
+                        <input
+                          type="number"
+                          value={minPrice}
+                          onChange={handleMinPriceChange}
+                          className="min-price-input"
+                          autoFocus
+                          onBlur={handleBlur}
+                        />
+                      ) : (
+                        <>
+                          <p className="price-paragraph">
+                            {minPrice ? minPrice : "დან"}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                   <div className="price-placement">
-                    <div className="inner-price-placement">
-                      <p className="price-paragraph">დან</p>
-                      <img
-                        src={GEL_Icon}
-                        alt="price-icon"
-                        className="GEL_Icon"
-                      ></img>
+                    <div
+                      className="inner-price-placement"
+                      onClick={handleMaxPriceClick}
+                    >
+                      
+                      {isEditingMaxPrice ? (
+                        <input
+                          type="number"
+                          value={maxPrice}
+                          onChange={handleMaxPriceChange}
+                          className="min-price-input"
+                          autoFocus
+                          onBlur={handleBlurMax}
+
+                        
+                          
+                        />
+                      ) : (
+                        <>
+                          <p className="price-paragraph">
+                            {maxPrice ? maxPrice : "მდე"}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
+
                 <div className="price-range-container">
                   <div className="price-range-inner-container">
                     <h4 className="header-price-range">მინ. ფასი</h4>
-                    <ul class="price-range-list">
+                    <ul className="price-range-list">
                       {priceRanges.map((price, index) => (
                         <li key={index} className="price-range-item">
                           {price.toLocaleString()}
@@ -320,7 +402,7 @@ const Home = () => {
                   </div>
                   <div className="price-range-inner-container">
                     <h4 className="header-price-range">მაქს. ფასი</h4>
-                    <ul class="price-range-list">
+                    <ul className="price-range-list">
                       {priceRanges.map((price, index) => (
                         <li key={index} className="price-range-item">
                           {price.toLocaleString()}
@@ -342,19 +424,24 @@ const Home = () => {
           </div>
         )}
 
-        <div className="filter-area" onClick={handleAreaClick}>
+        <div
+          className={`filter-area ${
+            isActiveDropdown === "area" ? "clicked" : ""
+          }`}
+          onClick={() => handleDropdownClick("area")}
+        >
           <p className="paragraph-area">ფართობი</p>
           <img src={Filter_Icon} alt="Filter Icon" className="filter_Icon" />
         </div>
-        {isAreaDropdownOpen && (
+        {isActiveDropdown === "area" && (
           <div className="main-container-Area-category-filter">
-            <div className="price-category-dropdown-inside-content">
-              <div className="first-inner-container">
-                <h3 className="price-category-header">ფართობის მიხედვით</h3>
-                <div className="price-placement-container">
-                  <div className="price-placement">
-                    <div className="inner-price-placement">
-                      <p className="price-paragraph">დან</p>
+            <div className="area-category-dropdown-inside-content">
+              <div className="area-first-inner-container">
+                <h3 className="area-header">ფართობის მიხედვით</h3>
+                <div className="area-placement-container">
+                  <div className="area-placement">
+                    <div className="inner-area-placement">
+                      <p className="area-paragraph">დან</p>
                       <div className="square-meters-container">
                         <p>მ</p>
                         <sup className="square-meters">2</sup>
@@ -371,13 +458,16 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
-                <div className="price-range-container">
-                  <div className="price-range-inner-container">
-                    <h4 className="header-price-range">მინ. ფართობი</h4>
-                    <ul class="area-range-list">
-                      {areaRanges.map((area, index) => (
-                        <div className="price-range-list-item-container">
-                          <li key={index} className="price-range-item">
+                <div className="area-range-container">
+                  <div className="area-range-inner-container">
+                    <h4 className="header-area-range">მინ. ფართობი</h4>
+                    <ul className="area-range-list">
+                      {areaRanges.map((area, index1) => (
+                        <div
+                          key={index1}
+                          className="area-range-list-item-container"
+                        >
+                          <li className="area-range-item">
                             {area.toLocaleString()}
                             <div className="square-meters-container">
                               <p>მ</p>
@@ -388,12 +478,15 @@ const Home = () => {
                       ))}
                     </ul>
                   </div>
-                  <div className="price-range-inner-container">
-                    <h4 className="header-price-range">მაქს. ფართობი</h4>
-                    <ul class="area-range-list">
+                  <div className="area-range-inner-container">
+                    <h4 className="header-area-range">მაქს. ფართობი</h4>
+                    <ul className="area-range-list">
                       {areaRanges.map((area, index) => (
-                        <div className="price-range-list-item-container">
-                          <li key={index} className="price-range-item">
+                        <div
+                          key={index}
+                          className="area-range-list-item-container"
+                        >
+                          <li className="area-range-item">
                             {area.toLocaleString()}
                             <div className="square-meters-container">
                               <p>მ</p>
@@ -413,18 +506,28 @@ const Home = () => {
           </div>
         )}
 
-        <div className="filter-bedroom" onClick={handleBedroomClick}>
+        <div
+          className={`filter-bedroom ${
+            isActiveDropdown === "bedroom" ? "clicked" : ""
+          }`}
+          onClick={() => handleDropdownClick("bedroom")}
+        >
           <p className="paragraph-bedroom">საძინებლების რაოდენობა</p>
           <img src={Filter_Icon} alt="Filter Icon" className="filter_Icon" />
         </div>
 
-        {isBedroomDropdownOpen && (
+        {isActiveDropdown === "bedroom" && (
           <div className="bedroom-filter-main-container">
             <div className="bedroom-filter-inner-container">
               <h3 className="bedroom-filter-header">საძინებლების რაოდენობა</h3>
-              <div className="bedrooms">
-                <p>1</p>
-                <p>2</p>
+              <div className="bedroom-container">
+                {bedrooms.map((bedroom, indexbedroom) => (
+                  <div key={indexbedroom} className="bedrooms">
+                    <p className="bedroom-paragraph">
+                      {bedrooms[indexbedroom].toLocaleString()}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
 
