@@ -442,7 +442,9 @@ body {
   justify-content: flex-end; 
   align-items: center; 
   padding-top: 35px;
+  
 }
+
 
 .choose-button {
   font-family: 'firaGO', Arial,  sans-serif;
@@ -458,6 +460,25 @@ body {
   justify-content: center; /* Center text horizontally */
   align-items: center; /* Center text vertically */
   border-radius:8px;
+  cursor: pointer;
+}
+
+.choose-button-area {
+  font-family: 'firaGO', Arial,  sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.8px;
+  width: 77px;
+  height:33px;
+  border-color: white;
+  background-color: #F93B1D; /* Set background color */
+  color: white; /* Set text color for contrast */
+  display: flex; /* Use flexbox to center text */
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */
+  border-radius:8px;
+  cursor: pointer;
+  margin-top:10px;
 }
 /*------------------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------------------------------*/
@@ -566,8 +587,18 @@ body {
 }
 
 
+.price-range-item {
+  list-style-type: none;
+  margin-bottom: 5px;
+  padding-left:0;
+ cursor: pointer;
+ max-width:77px;
 
+}
 
+.price-range-list {
+  padding-left:0;
+}
 
 
 
@@ -583,6 +614,23 @@ body {
   cursor: text;
   position: relative;
   padding-left: 10px;
+}
+
+.error {
+    width: 155px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  border: 1px solid red;
+  border-radius: 6px;
+  cursor: text;
+  position: relative;
+  padding-left: 10px;
+}
+
+.alert {
+  
+  color:red;
 }
 
 /* When the input is in edit mode, hide the text and show the input field */
@@ -678,6 +726,7 @@ body {
   align-items: center;
   border: 1px solid #808A93;
   border-radius: 6px;
+  cursor: text;
 }
 
 
@@ -696,6 +745,7 @@ body {
   color:  #02152666;
 }
 .square-meters-container {
+  
 margin-right: 10px;
 position: relative;
 display: inline-flex;
@@ -706,6 +756,8 @@ display: inline-flex;
   font-size: 1em; /* Ensures the paragraph text is at a normal size */
    font-family: "Fira GO", sans-serif; 
   font-weight: 400;
+ padding:0;
+  
 }
 
 .square-meters {
@@ -720,7 +772,7 @@ display: inline-flex;
 
 .area-range-container {
   width: 334px;
-  height: auto;
+  height: 180px;
   position: relative;
   display: flex;
   padding-top:0;
@@ -729,8 +781,9 @@ display: inline-flex;
 
 .area-range-inner-container {
   width:155px;
-  height:150px;
+  height:180px;
   padding-top:0;
+  margin-bottom:5px;
   
  
 }
@@ -741,27 +794,88 @@ display: inline-flex;
 
 .area-range-list {
   list-style-type: none;
-  margin-bottom: 0;
+  margin-top: 2px;
+  margin-bottom:0px;
   padding-left:0;
+  
+  
 }
 
 .area-range-item {
 font-family: "Fira GO", sans-serif; 
   font-weight: 400;
   margin-top:5px;
+  cursor: pointer;
+  max-width: 60px;
+  max-height:25px;
+  margin-bottom:20px;
   
 }
 
 .area-range-list-item-container {
   position:relative;
   display: flex;
-  width: 120px;
+  width: 52px;
   height:25px;
   align-items: center;
+  margin-bottom:2px;
+  transition:  0.3s ease;
+
+}
+
+.area-range-list-item-container:hover {
+  background-color: rgb(243, 238, 238);
+  transform: scale(1.15);
+  
 }
 
 
+.area-placement input[type="number"] {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  font-family: "Fira GO", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  text-align: left;
+  border: none;
+  outline: none;
+  background: transparent;
+}
 
+.error {
+    width: 155px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  border: 1px solid red;
+  border-radius: 6px;
+  cursor: text;
+  position: relative;
+  padding-left: 10px;
+}
+
+.area-placement .inner-area-placement p {
+  display: block; /* Show text when not editing */
+}
+
+/* Optionally, style input on focus */
+.area-placement input:focus {
+  border: 1px solid white; /* Highlight the border when input is focused */
+}
+
+/* Hide arrows in number input */
+.area-placement input[type="number"] {
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.area-placement input::-webkit-outer-spin-button,
+.area-placement input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 
 
@@ -848,6 +962,7 @@ justify-content: flex-end;
 bottom:0;
 margin-bottom:10px;
 margin-left:25px;
+cursor: pointer;
 
 }
 
@@ -866,12 +981,38 @@ margin-left:25px;
   justify-content: center;      /* Center horizontally */
   align-items: center;          /* Center vertically */
   border: 1px solid #808A93;
-  border-radius: 6px;
+  border-radius: 5px;
   background-color: white;   /* Add a background color for visibility */
   height: 32px;
   width: 30px;
   cursor:pointer; 
+ transition: 0.3s ease;
 }
+
+.bedrooms:hover {
+  background-color: #dae0e6;
+  transform: scale(1.05);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.bedrooms.clicked {
+  background-color: #dae0e6; /* Same as hover background color */
+  transform: scale(1.05);    /* Same as hover scale */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Same as hover shadow */
+  border-color: rgb(155, 151, 151); /* Additional clicked styles */
+  color: white; /* Optional, if needed for clicked state */
+
+}
+
+.bedrooms.clicked:hover {
+  /* Optional: Same as .bedrooms:hover or make hover over clicked different */
+  background-color: #c8d0d6;
+  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.25);
+}
+
+
+
+
 
 .bedroom-paragraph {
   font-family: "fira GO", sans-serif;

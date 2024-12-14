@@ -1,4 +1,10 @@
 /*
+
+//React is NOT the DOM, but a library that efficiently manages DOM updates
+//Nodes are objects in the DOM tree
+//React uses a Virtual DOM to optimize rendering performance
+
+
 import React, { useEffect, useState } from 'react';
 
 
@@ -85,7 +91,6 @@ const Home = () => {
   const [errorRegions, setErrorRegions] = useState(null);
 
   const [selectedRegions, setSelectedRegions] = useState([]);
-
   const [isRegionClicked, setIsRegionClicked] = useState(false);
 
   const [isActiveDropdown, setIsActiveDropdown] = useState(null);
@@ -95,9 +100,33 @@ const Home = () => {
   const [isEditingMinPrice, setIsEditingMinPrice] = useState(false);
   const [isEditingMaxPrice, setIsEditingMaxPrice] = useState(false);
 
+  const [minArea, setMinArea] = useState("");
+  const [maxArea, setMaxArea] = useState("");
+  const [isEditingMinArea, setIsEditingMinArea] = useState(false);
+  const [isEditingMaxArea, setIsEditingMaxArea] = useState(false);
+
+  const [RealEstatesCpy2, setRealEstatesCpy2] = useState([]);
+  const [RealEstatesCpy, setRealEstatesCpy] = useState([]); //state to hold the filtered result
   const priceRanges = [50000, 100000, 150000, 200000, 300000, 500000];
   const areaRanges = [50, 100, 150, 200, 300, 500];
   const bedrooms = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+
+  const [filteredEstates, setfilteredEstates] = useState([]);
+  const [filteredRegionEstates, setfilteredRegionEstates] = useState([]);
+  const [isRegionChooseButtonClicked, setIsRegionChooseButtonClicked] =
+    useState(false);
+  const [isPriceChooseButtonClicked, setIsPriceChooseButtonClicked] =
+    useState(false);
+  const [isBedroomChooseButtonClicked, setIsBedroomChooseButtonClicked] =
+    useState(false);
+  const [isAreaChooseButtonClicked, setIsAreaChooseButtonClicked] =
+    useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [invalidPrice, setInvalidPrice] = useState(false);
+
+  const [bedroomClickedIndex, setBedroomClickedIndex] = useState(null);
+  const [invalidArea, setInvalidArea] = useState(false);
+
   //const [stateVariable, setStateVariable] = useState([initialValue])
   //stateVariable aris exlandeli value.
   //setStateVariable aris funqcia romlitac vaupdatebt states
@@ -112,13 +141,14 @@ const Home = () => {
   useEffect(() => {
     const fetchRealEstates = async () => {
       try {
+        
         const response = await fetch(
           "https://api.real-estate-manager.redberryinternship.ge/api/real-estates",
           {
             method: "GET",
             headers: {
               Accept: "application/json",
-              Authorization: "Bearer 9cffe165-16cb-4f9b-b1ea-58179f807b77",
+              Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
             },
           }
         );
@@ -129,6 +159,9 @@ const Home = () => {
 
         const data = await response.json();
         setRealEstates(data);
+        setRealEstatesCpy(data);
+        setRealEstatesCpy2(data);
+
         console.log(data);
       } catch (error) {
         setErrorRealEstates(error);
@@ -141,6 +174,9 @@ const Home = () => {
     fetchRealEstates();
   }, []);
 
+  //----------------------------------------------------------------------------------------
+
+  //--------------------------------------------------------------------------------------
   const fetchRegions = async () => {
     setLoadingRegions(true); // Start loading for regions
     try {
@@ -170,11 +206,9 @@ const Home = () => {
     }
   };
 
-  //-------------------function_to_save_region_ids_that_are_checked-------------------------------------------
   const handleRegionCheckboxChange = (regionId) => {
-    //function parametre is regionId
+    setRealEstatesCpy(RealEstatesCpy2);
     setSelectedRegions((prevSelected) => {
-      //prevSelected is a parameter of setSelectedRegion function to accsess the previous state
       const newSelected = prevSelected.includes(regionId)
         ? prevSelected.filter((id) => id !== regionId) // Remove if already selected
         : [...prevSelected, regionId]; // Add if not selected
@@ -184,22 +218,114 @@ const Home = () => {
       return newSelected;
     });
   };
-  //-----------------------------------------------------------------------------------------------------------
 
+  //-----------------------------------------------------------------------------------
+  const applyFilters = () => {
+    if (parseInt(minPrice, 10) > parseInt(maxPrice, 10)) {
+      setInvalidPrice(true);
+      return;
+    } else {
+      setInvalidPrice(false);
+    }
+
+    if (parseInt(minArea, 10) > parseInt(maxArea, 10)) {
+      setInvalidArea(true);
+      return;
+    } else {
+      setInvalidArea(false);
+    }
+    let baseEstates = RealEstatesCpy2;
+
+    // Filter by region if selected
+    if (selectedRegions.length > 0) {
+      baseEstates = baseEstates.filter((estate) => {
+        const regionId = estate.city.region_id;
+        return selectedRegions.includes(regionId);
+      });
+    }
+
+    // Filter by price
+    const minPriceNum = parseInt(minPrice, 10);
+    const maxPriceNum = parseInt(maxPrice, 10);
+    if (!isNaN(minPriceNum) || !isNaN(maxPriceNum)) {
+      baseEstates = baseEstates.filter((estate) => {
+        const estatePrice = estate.price;
+        const isAboveMin = !isNaN(minPriceNum)
+          ? estatePrice >= minPriceNum
+          : true;
+        const isBelowMax = !isNaN(maxPriceNum)
+          ? estatePrice <= maxPriceNum
+          : true;
+        return isAboveMin && isBelowMax;
+      });
+    }
+
+    // Filter by area
+    const minAreaNum = parseInt(minArea, 10);
+    const maxAreaNum = parseInt(maxArea, 10);
+    if (!isNaN(minAreaNum) || !isNaN(maxAreaNum)) {
+      baseEstates = baseEstates.filter((estate) => {
+        const estateArea = estate.area;
+        const isAboveMinArea = !isNaN(minAreaNum)
+          ? estateArea >= minAreaNum
+          : true;
+        const isBelowMaxArea = !isNaN(maxAreaNum)
+          ? estateArea <= maxAreaNum
+          : true;
+        return isAboveMinArea && isBelowMaxArea;
+      });
+    }
+
+    // Filter by bedrooms
+    if (bedroomClickedIndex !== null) {
+      baseEstates = baseEstates.filter((estate) => {
+        return estate.bedrooms === bedroomClickedIndex + 1;
+      });
+    }
+
+    // Update the state with the filtered results
+    setRealEstates(baseEstates);
+  };
+  //------------------------------------------------------------------------------------------------------
+  // Refactored Region Filter
+  const handleFilterByRegion = () => {
+    setIsRegionChooseButtonClicked(true);
+    applyFilters();
+    setIsRegionChooseButtonClicked(false);
+  };
+
+  // Refactored Price Filter
+  const handlePriceCategoryChooseClick = () => {
+    setIsPriceChooseButtonClicked(true);
+    applyFilters();
+    setIsPriceChooseButtonClicked(false);
+  };
+
+  // Refactored Area Filter
+  const handleAreaChooseClick = () => {
+    setIsAreaChooseButtonClicked(true);
+    applyFilters();
+    setIsAreaChooseButtonClicked(false);
+  };
+
+  // Refactored Bedroom Filter
+  const handleBedroomChooseButtonClick = () => {
+    setIsBedroomChooseButtonClicked(true);
+    applyFilters();
+    setIsBedroomChooseButtonClicked(false);
+  };
+
+  //----------------------------------------------------------------------------------------------------------------------------
   if (loadingRealEstates)
     return <p className="loading">Loading real estates...</p>;
   if (errorRealEstates)
     return <p className="error">Error: {errorRealEstates.message}</p>;
 
-  //if (loadingRegions) return <p className="loading">Loading regions...</p>;
-  //if (errorRegions) return <p className="error">Error: {errorRegions.message}</p>
-
   const handleRegionClick = () => {
-    // Close any currently active dropdown (if any)
     if (isActiveDropdown !== "region") {
-      setIsActiveDropdown("region"); // Set active dropdown to "region"
+      setIsActiveDropdown("region");
     } else {
-      setIsActiveDropdown("null"); // Close the dropdown if it's already active
+      setIsActiveDropdown("null");
     }
 
     // Fetch regions if they haven't been fetched yet
@@ -221,39 +347,79 @@ const Home = () => {
 
   /*----------------------------------------------------------------------*/
   const handleMinPriceClick = () => {
+    console.log("handle min price click");
     setIsEditingMinPrice(true);
   };
 
-    const handleMaxPriceClick = () => {
-      setIsEditingMaxPrice(true);
-    };
-
-  const handleBlur = () => {
-    if(minPrice === "") {
-      setIsEditingMinPrice(false);
-    } 
-    
+  const handleMaxPriceClick = () => {
+    console.log("handle max price click");
+    setIsEditingMaxPrice(true);
   };
 
- const handleBlurMax = () => {
-   if (maxPrice === "") {
-     setIsEditingMaxPrice(false);
-   }
- };
+  const handleMinAreaClick = () => {
+    setIsEditingMinArea(true);
+  };
 
+  const handleMaxAreaClick = () => {
+    setIsEditingMaxArea(true);
+  };
 
+  //------------------------------------------------------------------------------------
 
   // Your handler function should look like this
   const handleMinPriceChange = (event) => {
     const valueMinPrice = event.target.value; // Get the value from the event target
     setMinPrice(valueMinPrice); // Update the state with the new value
+    setInvalidPrice(false);
   };
 
-   const handleMaxPriceChange = (event) => {
-     const valueMaxPrice = event.target.value; // Get the value from the event target
-     setMaxPrice(valueMaxPrice); // Update the state with the new value
-   };
-  
+  const handleMaxPriceChange = (event) => {
+    const valueMaxPrice = event.target.value; // Get the value from the event target
+    setMaxPrice(valueMaxPrice); // Update the state with the new value
+    setInvalidPrice(false);
+  };
+
+  const handleMinPriceListClick = (index) => {
+    console.log("minPrice is " + priceRanges[index]);
+    setMinPrice(priceRanges[index]);
+    setInvalidPrice(false);
+  };
+
+  const handleMaxPriceListClick = (index) => {
+    console.log("maxPrice is " + priceRanges[index]);
+    setMaxPrice(priceRanges[index]);
+    setInvalidPrice(false);
+  };
+
+  const handleMinAreaChange = (event) => {
+    const valueMinArea = event.target.value; // Get the value from the event target
+    setMinArea(valueMinArea); // Update the state with the new value
+    setInvalidArea(false);
+  };
+
+  const handleMaxAreaChange = (event) => {
+    const valueMaxArea = event.target.value; // Get the value from the event target
+    setMaxArea(valueMaxArea); // Update the state with the new value
+    setInvalidArea(false);
+  };
+
+  const handleMinAreaListClick = (index) => {
+    console.log("minArea is " + areaRanges[index]);
+    setMinArea(areaRanges[index]);
+    setInvalidArea(false);
+  };
+
+  const handleMaxAreaListClick = (index) => {
+    console.log("maxArea is " + areaRanges[index]);
+    setMaxArea(areaRanges[index]);
+    setInvalidArea(false);
+  };
+
+  function handleBedroomListClick(bedroom, index) {
+    setBedroomClickedIndex(index);
+    let bedroomInt = parseInt(bedroom, 10);
+    console.log("   bedroom  " + bedroom + "  index  " + index);
+  }
 
   /*----------------------------------------------------------------------*/
   return (
@@ -310,7 +476,12 @@ const Home = () => {
                 </div>
               )}
               <div className="choose-button-container">
-                <button className="choose-button">არჩევა</button>
+                <button
+                  className="choose-button"
+                  onClick={handleFilterByRegion}
+                >
+                  არჩევა
+                </button>
               </div>
             </div>
           </div>
@@ -331,9 +502,10 @@ const Home = () => {
             <div className="price-category-dropdown-inside-content">
               <div className="first-inner-container">
                 <h3 className="price-category-header">ფასის მიხედვით</h3>
+
                 <div className="price-placement-container">
                   <div
-                    className="price-placement"
+                    className={`price-placement ${invalidPrice ? "error" : ""}`}
                     onClick={handleMinPriceClick}
                   >
                     <div className="inner-price-placement">
@@ -344,7 +516,7 @@ const Home = () => {
                           onChange={handleMinPriceChange}
                           className="min-price-input"
                           autoFocus
-                          onBlur={handleBlur}
+                          //       onBlur={handleBlurMin}
                         />
                       ) : (
                         <>
@@ -355,12 +527,14 @@ const Home = () => {
                       )}
                     </div>
                   </div>
-                  <div className="price-placement">
+
+                  <div
+                    className={`price-placement ${invalidPrice ? "error" : ""}`}
+                  >
                     <div
                       className="inner-price-placement"
                       onClick={handleMaxPriceClick}
                     >
-                      
                       {isEditingMaxPrice ? (
                         <input
                           type="number"
@@ -368,10 +542,7 @@ const Home = () => {
                           onChange={handleMaxPriceChange}
                           className="min-price-input"
                           autoFocus
-                          onBlur={handleBlurMax}
-
-                        
-                          
+                          //     onBlur={handleBlurMax}
                         />
                       ) : (
                         <>
@@ -383,13 +554,22 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
+                {invalidPrice && (
+                  <div className="alert">
+                    <p>ჩაწერეთ ვალიდური მონაცემები</p>
+                  </div>
+                )}
 
                 <div className="price-range-container">
                   <div className="price-range-inner-container">
                     <h4 className="header-price-range">მინ. ფასი</h4>
                     <ul className="price-range-list">
                       {priceRanges.map((price, index) => (
-                        <li key={index} className="price-range-item">
+                        <li
+                          key={index}
+                          className="price-range-item"
+                          onClick={() => handleMinPriceListClick(index)}
+                        >
                           {price.toLocaleString()}
                           <img
                             src={GEL_Icon}
@@ -404,7 +584,11 @@ const Home = () => {
                     <h4 className="header-price-range">მაქს. ფასი</h4>
                     <ul className="price-range-list">
                       {priceRanges.map((price, index) => (
-                        <li key={index} className="price-range-item">
+                        <li
+                          key={index}
+                          className="price-range-item"
+                          onClick={() => handleMaxPriceListClick(index)}
+                        >
                           {price.toLocaleString()}
                           <img
                             src={GEL_Icon}
@@ -418,7 +602,13 @@ const Home = () => {
                 </div>
               </div>
               <div className="choose-button-container">
-                <button className="choose-button">არჩევა</button>
+                <button
+                  id="2"
+                  className="choose-button"
+                  onClick={handlePriceCategoryChooseClick}
+                >
+                  არჩევა
+                </button>
               </div>
             </div>
           </div>
@@ -439,33 +629,68 @@ const Home = () => {
               <div className="area-first-inner-container">
                 <h3 className="area-header">ფართობის მიხედვით</h3>
                 <div className="area-placement-container">
-                  <div className="area-placement">
+                  <div
+                    className={`area-placement ${invalidArea ? "error" : ""}`}
+                    onClick={handleMinAreaClick}
+                  >
                     <div className="inner-area-placement">
-                      <p className="area-paragraph">დან</p>
-                      <div className="square-meters-container">
-                        <p>მ</p>
-                        <sup className="square-meters">2</sup>
-                      </div>
+                      {isEditingMinArea ? (
+                        <input
+                          type="number"
+                          value={minArea}
+                          onChange={handleMinAreaChange}
+                          className="min-area-input"
+                          autoFocus
+                        />
+                      ) : (
+                        <>
+                          <p className="area-paragraph">
+                            {minArea ? minArea : "დან"}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
-                  <div className="price-placement">
-                    <div className="inner-price-placement">
-                      <p className="price-paragraph">დან</p>
-                      <div className="square-meters-container">
-                        <p>მ</p>
-                        <sup className="square-meters">2</sup>
-                      </div>
+
+                  <div
+                    className={`area-placement ${invalidArea ? "error" : ""}`}
+                    onClick={handleMaxAreaClick}
+                  >
+                    <div className="inner-area-placement">
+                      {isEditingMaxArea ? (
+                        <input
+                          type="number"
+                          value={maxArea}
+                          onChange={handleMaxAreaChange}
+                          className="max-area-input"
+                          autoFocus
+                        />
+                      ) : (
+                        <>
+                          <p className="area-paragraph">
+                            {maxArea ? maxArea : "მდე"}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
+
+                {invalidArea && (
+                  <div className="alert">
+                    <p>ჩაწერეთ ვალიდური მონაცემები</p>
+                  </div>
+                )}
+
                 <div className="area-range-container">
                   <div className="area-range-inner-container">
                     <h4 className="header-area-range">მინ. ფართობი</h4>
                     <ul className="area-range-list">
-                      {areaRanges.map((area, index1) => (
+                      {areaRanges.map((area, index) => (
                         <div
-                          key={index1}
+                          key={index}
                           className="area-range-list-item-container"
+                          onClick={() => handleMinAreaListClick(index)} //იქმნება ანონიმური ფუნქცია, რომელიც გამოიძახება მაშინ როდესაც დავაკლიკებთ
                         >
                           <li className="area-range-item">
                             {area.toLocaleString()}
@@ -485,6 +710,7 @@ const Home = () => {
                         <div
                           key={index}
                           className="area-range-list-item-container"
+                          onClick={() => handleMaxAreaListClick(index)}
                         >
                           <li className="area-range-item">
                             {area.toLocaleString()}
@@ -500,7 +726,12 @@ const Home = () => {
                 </div>
               </div>
               <div className="choose-button-container">
-                <button className="choose-button">არჩევა</button>
+                <button
+                  className="choose-button-area"
+                  onClick={handleAreaChooseClick}
+                >
+                  არჩევა
+                </button>
               </div>
             </div>
           </div>
@@ -521,10 +752,16 @@ const Home = () => {
             <div className="bedroom-filter-inner-container">
               <h3 className="bedroom-filter-header">საძინებლების რაოდენობა</h3>
               <div className="bedroom-container">
-                {bedrooms.map((bedroom, indexbedroom) => (
-                  <div key={indexbedroom} className="bedrooms">
+                {bedrooms.map((bedroom, index) => (
+                  <div
+                    key={index}
+                    className={`bedrooms ${
+                      bedroomClickedIndex === index ? "clicked" : ""
+                    }`}
+                    onClick={() => handleBedroomListClick(bedroom, index)}
+                  >
                     <p className="bedroom-paragraph">
-                      {bedrooms[indexbedroom].toLocaleString()}
+                      {bedroom.toLocaleString()}
                     </p>
                   </div>
                 ))}
@@ -532,7 +769,12 @@ const Home = () => {
             </div>
 
             <div className="bedroom-choose-button-container">
-              <button className="choose-button">არჩევა</button>
+              <button
+                className="choose-button"
+                onClick={handleBedroomChooseButtonClick}
+              >
+                არჩევა
+              </button>
             </div>
           </div>
         )}
